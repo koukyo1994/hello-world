@@ -7,43 +7,41 @@ import time
 time_flag = True
 
 while time_flag:
-    if datetime.now().minute != 59:
-        time.sleep(58)
+    if datetime.now().second != 59:
+        time.sleep(1)
         continue
 
-    with open("data/nikkei_heikin.csv", "a") as f:
-        writer = csv.writer(f, lineterminator='\n')
+    time.sleep(1)
 
-        while datetime.now().second != 59:
-            time.sleep(1)
+    f = open("/home/hidehisa/hobby/scraper/data/nikkei_heikin.csv", "a")
+    writer = csv.writer(f, lineterminator='\n')
 
-        time.sleep(1)
-        csv_list = []
+    csv_list = []
 
-        time_stamp = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
-        csv_list.append(time_stamp)
+    time_stamp = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
+    csv_list.append(time_stamp)
 
-        url = "http://www.nikkei.com/market/kabu"
-        html = urllib.request.urlopen(url)
+    url = "https://www.nikkei.com/markets/kabu/"
+    html = urllib.request.urlopen(url)
 
-        soup = BeautifulSoup(html, "html.parser")
+    soup = BeautifulSoup(html, "html.parser")
 
-        span = soup.find_all("span")
-        nikkei_heikin = ""
+    span = soup.find_all("span")
+    nikkei_heikin = ""
 
-        for tag in span:
-            try:
-                string_ = tag.get("class").pop(0)
-                if string_ in "mkc-stock_price":
-                    nikkei_heikin = tag.string
+    for tag in span:
+        try:
+            string_ = tag.get("class").pop(0)
+            if "mkc-stock_prices" in string_:
+                nikkei_heikin = tag.string
 
-                    break
-            except:
-                pass
+                break
+        except:
+            pass
 
-        print(time_stamp, nikkei_heikin)
-        csv_list.append(nikkei_heikin)
-        writer.writerow(csv_list)
+    csv_list.append(nikkei_heikin)
+    writer.writerow(csv_list)
+    f.close()
 
-    if datetime.now().hour == 23:
+    if datetime.now().hour == 22:
         time_flag = False
