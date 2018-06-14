@@ -43,5 +43,5 @@ while time_flag:
     writer.writerow(csv_list)
     f.close()
 
-    if datetime.now().hour == 22:
-        time_flag = False
+    #if datetime.now().hour == 22:
+    #    time_flag = False
